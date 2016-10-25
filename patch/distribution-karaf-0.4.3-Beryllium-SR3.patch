@@ -1,0 +1,84 @@
+From 7290771c4c8b97095b297b698bf01bde0b80b9ae Mon Sep 17 00:00:00 2001
+From: root <root@maple.caltech.edu>
+Date: Mon, 24 Oct 2016 20:03:05 -0700
+Subject: [PATCH] Apply changes
+
+Signed-off-by: root <root@maple.caltech.edu>
+---
+ ...tures-alto-release-0.2.3-Beryllium-SR3-features.xml | 18 +++---------------
+ .../arphandler-config-0.3.3-Beryllium-SR3-config.xml   |  2 +-
+ .../main-config-0.3.3-Beryllium-SR3-config.xml         |  2 +-
+ etc/org.apache.karaf.features.cfg                      |  2 +-
+ 3 files changed, 6 insertions(+), 18 deletions(-)
+
+diff --git a/system/org/opendaylight/alto/features-alto-release/0.2.3-Beryllium-SR3/features-alto-release-0.2.3-Beryllium-SR3-features.xml b/system/org/opendaylight/alto/features-alto-release/0.2.3-Beryllium-SR3/features-alto-release-0.2.3-Beryllium-SR3-features.xml
+index 24da087..8d1669f 100644
+--- a/system/org/opendaylight/alto/features-alto-release/0.2.3-Beryllium-SR3/features-alto-release-0.2.3-Beryllium-SR3-features.xml
++++ b/system/org/opendaylight/alto/features-alto-release/0.2.3-Beryllium-SR3/features-alto-release-0.2.3-Beryllium-SR3-features.xml
+@@ -34,21 +34,9 @@
+     <feature version="1.3.3-Beryllium-SR3">odl-mdsal-broker</feature>
+     <feature version="0.2.3-Beryllium-SR3">odl-openflowplugin-flow-services</feature>
+     <feature version="0.2.3-Beryllium-SR3">odl-openflowplugin-southbound</feature>
+-    <bundle>mvn:org.opendaylight.l2switch.packethandler/packethandler-model/0.3.3-Beryllium-SR3</bundle>
+-    <bundle>mvn:org.opendaylight.l2switch.packethandler/packethandler-impl/0.3.3-Beryllium-SR3</bundle>
+-    <configfile finalname="etc/opendaylight/karaf/50-packethandler.xml">mvn:org.opendaylight.l2switch.packethandler/packethandler-config/0.3.3-Beryllium-SR3/xml/config</configfile>
+-    <bundle>mvn:org.opendaylight.l2switch.loopremover/loopremover-model/0.3.3-Beryllium-SR3</bundle>
+-    <bundle>mvn:org.opendaylight.l2switch.loopremover/loopremover-impl/0.3.3-Beryllium-SR3</bundle>
+-    <bundle>mvn:org.opendaylight.controller.thirdparty/net.sf.jung2/2.0.1</bundle>
+-    <configfile finalname="etc/opendaylight/karaf/52-loopremover.xml">mvn:org.opendaylight.l2switch.loopremover/loopremover-config/0.3.3-Beryllium-SR3/xml/config</configfile>
+-    <bundle>mvn:org.opendaylight.l2switch.hosttracker/hosttracker-model/0.3.3-Beryllium-SR3</bundle>
+-    <bundle>mvn:org.opendaylight.l2switch.hosttracker/hosttracker-impl/0.3.3-Beryllium-SR3</bundle>
+-    <configfile finalname="etc/opendaylight/karaf/57-hosttracker.xml">mvn:org.opendaylight.l2switch.hosttracker/hosttracker-config/0.3.3-Beryllium-SR3/xml/config</configfile>
+-    <bundle>mvn:org.opendaylight.l2switch.addresstracker/addresstracker-model/0.3.3-Beryllium-SR3</bundle>
+-    <bundle>mvn:org.opendaylight.l2switch.arphandler/arphandler-impl/0.3.3-Beryllium-SR3</bundle>
+-    <configfile finalname="etc/opendaylight/karaf/54-alto-arphandler.xml">mvn:org.opendaylight.alto.spce.network/network-tracker-config/0.2.3-Beryllium-SR3/xml/config</configfile>
+-    <bundle>mvn:org.opendaylight.l2switch.addresstracker/addresstracker-impl/0.3.3-Beryllium-SR3</bundle>
+-    <configfile finalname="etc/opendaylight/karaf/56-addresstracker.xml">mvn:org.opendaylight.l2switch.addresstracker/addresstracker-config/0.3.3-Beryllium-SR3/xml/config</configfile>
++    <feature version="0.3.3-Beryllium-SR3">odl-l2switch-hosttracker</feature>
++    <feature version="0.3.3-Beryllium-SR3">odl-l2switch-arphandler</feature>
++    <feature version="0.3.3-Beryllium-SR3">odl-l2switch-loopremover</feature>
+     <bundle>mvn:org.opendaylight.alto.spce.network/network-tracker-api/0.2.3-Beryllium-SR3</bundle>
+     <bundle>mvn:org.opendaylight.alto.spce.network/network-tracker-impl/0.2.3-Beryllium-SR3</bundle>
+     <configfile finalname="etc/opendaylight/karaf/network-tracker.xml">mvn:org.opendaylight.alto.spce.network/network-tracker-impl/0.2.3-Beryllium-SR3/xml/config</configfile>
+diff --git a/system/org/opendaylight/l2switch/arphandler/arphandler-config/0.3.3-Beryllium-SR3/arphandler-config-0.3.3-Beryllium-SR3-config.xml b/system/org/opendaylight/l2switch/arphandler/arphandler-config/0.3.3-Beryllium-SR3/arphandler-config-0.3.3-Beryllium-SR3-config.xml
+index 13e1707..fcc4c46 100644
+--- a/system/org/opendaylight/l2switch/arphandler/arphandler-config/0.3.3-Beryllium-SR3/arphandler-config-0.3.3-Beryllium-SR3-config.xml
++++ b/system/org/opendaylight/l2switch/arphandler/arphandler-config/0.3.3-Beryllium-SR3/arphandler-config-0.3.3-Beryllium-SR3-config.xml
+@@ -31,7 +31,7 @@
+           setting <is-proactive-flood-mode> to true refers to proactive flood mode
+           where flood flows are automatically written to each switch.
+           -->
+-          <is-proactive-flood-mode>true</is-proactive-flood-mode>
++          <is-proactive-flood-mode>false</is-proactive-flood-mode>
+           <is-hybrid-mode>false</is-hybrid-mode>
+ 
+           <notification-service>
+diff --git a/system/org/opendaylight/l2switch/main/main-config/0.3.3-Beryllium-SR3/main-config-0.3.3-Beryllium-SR3-config.xml b/system/org/opendaylight/l2switch/main/main-config/0.3.3-Beryllium-SR3/main-config-0.3.3-Beryllium-SR3-config.xml
+index d92ead0..04a1a38 100644
+--- a/system/org/opendaylight/l2switch/main/main-config/0.3.3-Beryllium-SR3/main-config-0.3.3-Beryllium-SR3-config.xml
++++ b/system/org/opendaylight/l2switch/main/main-config/0.3.3-Beryllium-SR3/main-config-0.3.3-Beryllium-SR3-config.xml
+@@ -16,7 +16,7 @@
+             prefix:main-impl
+           </type>
+           <name>main-impl</name>
+-          <is-learning-only-mode>false</is-learning-only-mode>
++          <is-learning-only-mode>true</is-learning-only-mode>
+           <is-install-dropall-flow>true</is-install-dropall-flow>
+           <dropall-flow-table-id>0</dropall-flow-table-id>
+           <dropall-flow-priority>0</dropall-flow-priority>
+diff --git a/etc/org.apache.karaf.features.cfg b/etc/org.apache.karaf.features.cfg
+index a10c2ae..eba56d3 100644
+--- a/etc/org.apache.karaf.features.cfg
++++ b/etc/org.apache.karaf.features.cfg
+@@ -41,7 +41,7 @@ featuresRepositories = mvn:org.apache.karaf.features/standard/3.0.3/xml/features
+ #
+ # Comma separated list of features to install at startup
+ #
+-featuresBoot=config,standard,region,package,kar,ssh,management
++featuresBoot=config,standard,region,package,kar,ssh,management,odl-alto-spce,odl-dlux-all
+ 
+ #
+ # Defines if the boot features are started in asynchronous mode (in a dedicated thread)
+-- 
+2.7.4
+
