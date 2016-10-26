@@ -16,7 +16,7 @@ index 53e1e38..e0ca0c5 100755
 @@ -151,9 +151,18 @@ run() {
      exec "$KARAF_HOME"/bin/karaf server "$@" >> "$KARAF_REDIRECT" 2>&1 &
  }
- 
+
 +stabilize() {
 +    if [ -f "$KARAF_HOME/bin/ofstabilizer.py" ]; then
 +	PYTHON=`which python3`
@@ -30,7 +30,7 @@ index 53e1e38..e0ca0c5 100755
      run "$@"
 +    stabilize
  }
- 
+
  main "$@"
 diff --git a/bin/stop b/bin/stop
 index a58b987..d6ff081 100755
@@ -39,9 +39,9 @@ index a58b987..d6ff081 100755
 @@ -32,6 +32,13 @@ warn() {
      echo "${PROGNAME}: $*"
  }
- 
+
 +close_stabilizer() {
-+    PID="`pgrep python | grep ofstabilizer | awk '{print $1}'`"
++    PID="`pgrep -a python | grep ofstabilizer | awk '{print $1}'`"
 +    if [ $PID ]; then
 +	kill $PID
 +    fi
@@ -50,6 +50,6 @@ index a58b987..d6ff081 100755
  die() {
      warn "$*"
      exit 1
--- 
+--
 2.7.4
 
