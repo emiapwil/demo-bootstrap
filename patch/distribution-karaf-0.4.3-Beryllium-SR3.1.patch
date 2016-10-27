@@ -50,6 +50,14 @@ index a58b987..d6ff081 100755
  die() {
      warn "$*"
      exit 1
+@@ -150,6 +150,7 @@ run() {
+ main() {
+     init
+     run "$@"
++    close_stabilizer
+ }
+
+ main "$@"
 --
 2.7.4
 
