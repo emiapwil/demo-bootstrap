@@ -48,8 +48,9 @@ install() {
 }
 
 patch() {
-	PATCH_FILES=$(find patch -name $DISTRIBUTION"*")
+	PATCH_FILES=$(find patch -name $DISTRIBUTION"*" | sort)
 	if [ "$PATCH_FILES" ]; then
+		pushd $DISTRIBUTION && git init && popd
 		echo "Applying patch for "$DISTRIBUTION
 		for patch in $PATCH_FILES; do
 			rm -rf $DISTRIBUTION/_tmp
