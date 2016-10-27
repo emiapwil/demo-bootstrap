@@ -21,11 +21,12 @@ find_local_file() {
 
 download() {
 	if [ -z "$DISTRIBUTION_FILE" ]; then
-		URL= $(cat distributions | grep $DISTRIBUTION)
+		URL="$(cat distributions | grep $DISTRIBUTION)"
 		if [ -z "$URL" ]; then
 			echo "Error: Cannot download distribution file."
 			exit 1
 		fi
+		wget $URL
 		find_local_file
 	fi
 
@@ -57,7 +58,7 @@ patch() {
 
 			cp $patch $DISTRIBUTION/_tmp
 			pushd $DISTRIBUTION && git apply _tmp \
-				&& echo $DISTRIBUTION" is patched" \
+				&& echo $DISTRIBUTION" is patched with "$patch \
 				|| echo "Error patching "$DISTRIBUTION && popd
 			rm -rf $DISTRIBUTION/_tmp
 		done
