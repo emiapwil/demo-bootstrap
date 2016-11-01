@@ -1,0 +1,63 @@
+From 1aaf90cdd24014b839bbdbc6dde6cb91af618759 Mon Sep 17 00:00:00 2001
+From: root <root@maple.caltech.edu>
+Date: Tue, 25 Oct 2016 11:38:46 -0700
+Subject: [PATCH] Update the scripts to launch stabilizer
+
+Signed-off-by: root <root@maple.caltech.edu>
+---
+ bin/start | 9 +++++++++
+ bin/stop  | 7 +++++++
+ 2 files changed, 16 insertions(+)
+
+diff --git a/bin/start b/bin/start
+index 53e1e38..e0ca0c5 100755
+--- a/bin/start
++++ b/bin/start
+@@ -151,9 +151,18 @@ run() {
+     exec "$KARAF_HOME"/bin/karaf server "$@" >> "$KARAF_REDIRECT" 2>&1 &
+ }
+
++stabilize() {
++    if [ -f "$KARAF_HOME/bin/ofstabilizer.py" ]; then
++	PYTHON=`which python3`
++        chmod +x "$KARAF_HOME/bin/ofstabilizer.py"
++        exec "$PYTHON" "$KARAF_HOME/bin/ofstabilizer.py" "127.0.0.1" >> "$KARAF_REDIRECT" 2>&1 &
++    fi
++}
++
+ main() {
+     init
+     run "$@"
++    stabilize
+ }
+
+ main "$@"
+diff --git a/bin/stop b/bin/stop
+index a58b987..d6ff081 100755
+--- a/bin/stop
++++ b/bin/stop
+@@ -32,6 +32,13 @@ warn() {
+     echo "${PROGNAME}: $*"
+ }
+
++close_stabilizer() {
++    PID="`pgrep -a python | grep ofstabilizer | awk '{print $1}'`"
++    if [ $PID ]; then
++	kill $PID
++    fi
++}
++
+ die() {
+     warn "$*"
+     exit 1
+@@ -148,6 +148,7 @@ run() {
+ main() {
++    close_stabilizer
+     init
+     run "$@"
+ }
+
+ main "$@"
+--
+2.7.4
+
