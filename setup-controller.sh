@@ -7,6 +7,10 @@ else
 	DISTRIBUTION=distribution-karaf-0.4.3-Beryllium-SR3
 fi
 
+if [ $2 ]; then
+	DEBUG="yes"
+fi
+
 find_local_file() {
 	if [ -f "$DISTRIBUTION.tar.gz" ]; then
 		DISTRIBUTION_FILE="$DISTRIBUTION.tar.gz"
@@ -65,7 +69,44 @@ patch() {
 	fi
 }
 
+debug_l2switch() {
+	local L2_PATH="$DISTRIBUTION/system/org/opendaylight/l2switch"
+	rm -rf "$L2_PATH"
+	if [ ! -f "l2switch.zip" ]; then
+		wget https://dl.dropboxusercontent.com/u/67746293/l2switch.zip
+	fi
+
+	mkdir -p "$L2_PATH"
+	cp l2switch.zip "$L2_PATH"
+	pushd "$L2_PATH" && unzip l2switch.zip && popd || popd
+	
+}
+
+debug_openflowplugin() {
+	local OFP_PATH="$DISTRIBUTION/system/org/opendaylight/openflowplugin"
+	rm -rf "$OFP_PATH"
+	if [ ! -f "openflowplugin.zip" ]; then
+		echo "Maybe next time"
+		return
+	fi
+
+	mkdir -p "$OFP_PATH"
+	cp openflowplugin.zip "$OFP_PATH"
+	pushd "$OFP_PATH" && unzip openflowplugin.zip && popd || popd
+}
+
+enable_debug() {
+	if [ -z "$DEBUG" ] ; then
+		return
+	fi
+	ODL_SYSPATH="$DISTRIBUTION/system/org/opendaylight"
+	
+	debug_l2switch
+	debug_openflowplugin
+}
+
 find_local_file
 download
 install
 patch
+enable_debug

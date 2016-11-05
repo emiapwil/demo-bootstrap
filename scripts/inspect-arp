@@ -1,0 +1,31 @@
+#!/bin/bash
+
+ROOT_DIR="$(dirname $(which $0))/.."
+
+SCRIPT_DIR="$ROOT_DIR/scripts"
+
+source "$SCRIPT_DIR/util"
+
+set_distribution $1
+
+DIST_DIR="$ROOT_DIR/$DISTRIBUTION"
+
+pushd $DIST_DIR
+
+TMP="_tmp_arp"
+rm -rf "$TMP"
+
+# process learning information
+grep 'Learning' -r data/log >> "$TMP"
+
+merge_log_file "$TMP"
+
+MAC_REGEX="MacAddress.*_value=\(.*\)]"
+NC_REGEX="NodeConnectorRef.*_value=\(.*\)]]]]}]"
+
+sed -i "s/| INFO.*SR3 |//g" "$TMP"
+sed -i "s/$MAC_REGEX from $NC_REGEX/\1 from \2/g" "$TMP"
+
+popd
+
+mv "$DISTRIBUTION/$TMP" arp

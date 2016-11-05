@@ -1,0 +1,33 @@
+#!/bin/bash
+
+ROOT_DIR="$(dirname $(which $0))/.."
+
+SCRIPT_DIR="$ROOT_DIR/scripts"
+
+source "$SCRIPT_DIR/util"
+
+set_distribution $1
+
+DIST_DIR="$ROOT_DIR/$DISTRIBUTION"
+
+pushd $DIST_DIR
+
+TMP="_tmp_lldp"
+rm -f "$TMP"
+
+# process received packet
+grep "LLDPDiscoveryListener" -r data/log >> "$TMP"
+grep "LLDPSpeaker" -r data/log >> "$TMP"
+
+## merge different log files
+merge_log_file "$TMP"
+
+NC_REGEX="NodeConnectorRef.*_value=\(.*\)]]]]}]"
+
+# format the output
+sed -i "s/| INFO.*SR3 |//g" "$TMP"
+sed -i "s/$NC_REGEX from $NC_REGEX/\1 from \2/g" "$TMP"
+
+popd
+
+mv "$DISTRIBUTION/$TMP" lldp

@@ -1,0 +1,7 @@
+#!/bin/bash
+
+if [ $1 ]; then
+	DISTRIBUTION=$1
+else
+	DISTRIBUTION="distribution-karaf-0.4.3-Beryllium-SR3"
+fi

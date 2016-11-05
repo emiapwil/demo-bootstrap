@@ -1,0 +1,20 @@
+#!/bin/bash
+
+set_distribution() {
+	if [ -z "$1" ]; then
+		DISTRIBUTION="distribution-karaf-0.4.3-Beryllium-SR3"
+	else
+		DISTRIBUTION="$1"
+	fi
+}
+
+merge_log_file() {
+	local ORIGIN=$1
+	local TMP="$1_tmp"
+
+	rm -f $TMP
+
+	cat "$ORIGIN" | sed "s/^.*2016/2016/g" | sort | uniq > "$TMP"
+	mv "$TMP" "$ORIGIN"
+}
+
