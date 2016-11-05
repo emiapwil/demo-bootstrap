@@ -71,25 +71,25 @@ patch() {
 
 debug_l2switch() {
 	local L2_PATH="$DISTRIBUTION/system/org/opendaylight/l2switch"
-	rm -rf "$L2_PATH"
 	if [ ! -f "l2switch.zip" ]; then
 		wget https://dl.dropboxusercontent.com/u/67746293/l2switch.zip
 	fi
 
+	rm -rf "$L2_PATH"
 	mkdir -p "$L2_PATH"
 	cp l2switch.zip "$L2_PATH"
 	pushd "$L2_PATH" && unzip l2switch.zip && popd || popd
-	
+
 }
 
 debug_openflowplugin() {
 	local OFP_PATH="$DISTRIBUTION/system/org/opendaylight/openflowplugin"
-	rm -rf "$OFP_PATH"
 	if [ ! -f "openflowplugin.zip" ]; then
 		echo "Maybe next time"
 		return
 	fi
 
+	rm -rf "$OFP_PATH"
 	mkdir -p "$OFP_PATH"
 	cp openflowplugin.zip "$OFP_PATH"
 	pushd "$OFP_PATH" && unzip openflowplugin.zip && popd || popd
@@ -100,7 +100,7 @@ enable_debug() {
 		return
 	fi
 	ODL_SYSPATH="$DISTRIBUTION/system/org/opendaylight"
-	
+
 	debug_l2switch
 	debug_openflowplugin
 }

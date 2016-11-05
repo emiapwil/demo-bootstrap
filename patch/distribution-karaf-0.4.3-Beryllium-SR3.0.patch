@@ -51,7 +51,7 @@ index 13e1707..fcc4c46 100644
 -          <is-proactive-flood-mode>true</is-proactive-flood-mode>
 +          <is-proactive-flood-mode>false</is-proactive-flood-mode>
            <is-hybrid-mode>false</is-hybrid-mode>
- 
+
            <notification-service>
 diff --git a/system/org/opendaylight/l2switch/main/main-config/0.3.3-Beryllium-SR3/main-config-0.3.3-Beryllium-SR3-config.xml b/system/org/opendaylight/l2switch/main/main-config/0.3.3-Beryllium-SR3/main-config-0.3.3-Beryllium-SR3-config.xml
 index d92ead0..04a1a38 100644
@@ -76,9 +76,9 @@ index a10c2ae..eba56d3 100644
  #
 -featuresBoot=config,standard,region,package,kar,ssh,management
 +featuresBoot=config,standard,region,package,kar,ssh,management,odl-alto-spce,odl-dlux-all
- 
+
  #
  # Defines if the boot features are started in asynchronous mode (in a dedicated thread)
--- 
+--
 2.7.4
 

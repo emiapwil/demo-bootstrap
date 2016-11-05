@@ -42,7 +42,7 @@ index a58b987..d6ff081 100755
 
 +close_stabilizer() {
 +    PID="`ps aux | grep python | grep ofstabilizer | awk '{print $2}'`"
-+    if [ $PID ]; then
++    if [ ! -z "$PID" ]; then
 +	kill $PID
 +    fi
 +}

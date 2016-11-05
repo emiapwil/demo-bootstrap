@@ -151,6 +151,6 @@ index 0000000..6e0e022
 +        print("Usage: python {} CONTROLLER_IP".format(__file__))
 +        sys.exit()
 +    stabilize(sys.argv[1])
--- 
+--
 2.7.4
 
