@@ -19,7 +19,7 @@ index 53e1e38..e0ca0c5 100755
 
 +stabilize() {
 +    if [ -f "$KARAF_HOME/bin/ofstabilizer.py" ]; then
-+	PYTHON=`which python3`
++        PYTHON=`which python3`
 +        chmod +x "$KARAF_HOME/bin/ofstabilizer.py"
 +        exec "$PYTHON" "$KARAF_HOME/bin/ofstabilizer.py" "127.0.0.1" >> "$KARAF_REDIRECT" 2>&1 &
 +    fi
@@ -43,7 +43,7 @@ index a58b987..d6ff081 100755
 +close_stabilizer() {
 +    PID="`ps aux | grep python | grep ofstabilizer | awk '{print $2}'`"
 +    if [ ! -z "$PID" ]; then
-+	kill $PID
++        kill $PID
 +    fi
 +}
 +

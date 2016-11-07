@@ -2,31 +2,22 @@
 
 ROOT_DIR="$(dirname $(which $0))"
 SCRIPT_DIR="$ROOT_DIR/scripts"
+PATCH_DIR="$ROOT_DIR/patch"
 
 source "$SCRIPT_DIR/util"
 
 setup_distribution $1
+shift
 
-if [ $2 ]; then
-	DEBUG="yes"
+if [ "$1" == "prompt" ]; then
+	PROMPT="Y"
+	shift
 fi
 
-patch() {
-	PATCH_FILES=$(find patch -name $DISTRIBUTION"*" | sort)
-	if [ "$PATCH_FILES" ]; then
-		pushd $DISTRIBUTION && git init && popd
-		echo "Applying patch for "$DISTRIBUTION
-		for patch in $PATCH_FILES; do
-			rm -rf $DISTRIBUTION/_tmp
-
-			cp $patch $DISTRIBUTION/_tmp
-			pushd $DISTRIBUTION && git apply _tmp \
-				&& echo $DISTRIBUTION" is patched with "$patch \
-				|| echo "Error patching "$DISTRIBUTION && popd
-			rm -rf $DISTRIBUTION/_tmp
-		done
-	fi
-}
+if [ "$1" == "debug" ]; then
+	DEBUG="Y"
+	shift
+fi
 
 enable_debug() {
 	if [ -z "$DEBUG" ] ; then
@@ -37,5 +28,26 @@ enable_debug() {
 	debug_openflowplugin
 }
 
-patch
+prompt() {
+	CMD="$1"
+
+	if [ ! -z "$PROMPT" ]; then
+		echo "Accept $CMD?"
+		select choice in 'Yes' 'No';
+		do
+			case $choice in
+				'No'  ) return;;
+				'Yes' ) break;;
+			esac
+		done
+	fi
+
+	$CMD
+}
+
+prompt configure_l2switch
+prompt enable_ofstabilizer
+prompt install_snlab_ofessentials
+prompt patch_distribution
+
 enable_debug

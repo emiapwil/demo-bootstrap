@@ -6,6 +6,17 @@ mkdir -p "$CACHE"
 
 DEFAULT_DISTRIBUTION="distribution-karaf-0.4.3-Beryllium-SR3"
 
+work_in() {
+	local DIR="$1"
+	shift
+	local CMD="$*"
+	pushd "$DIR" &>/dev/null && \
+		$CMD &>/dev/null && \
+		echo "Done." || \
+		echo "Failed." && \
+		popd
+}
+
 find_local_file() {
 	local FILENAME=$1
 	local TARGET=$2
@@ -29,7 +40,7 @@ download() {
 	echo $TARGET_FILE
 
 	if [ -z "$TARGET_FILE" ] || [ ! -f "$CACHE/$TARGET_FILE" ]; then
-		URL="$(cat filelist | grep $FILENAME)"
+		URL="$(cat filelist | grep "$FILENAME\..*$")"
 		if [ -z "$URL" ]; then
 			echo "Error: Cannot download file: $FILENAME"
 			exit 1
@@ -61,7 +72,9 @@ install() {
 	fi
 
 	mkdir -p "$INSTALL_PATH"
-	pushd "$INSTALL_PATH" && $INSTALL "$TARGET_FILE" && popd
+
+	echo "Installing $DISTRIBUTION"
+	work_in "$INSTALL_PATH" "$INSTALL $TARGET_FILE"
 }
 
 merge_log_file() {
@@ -80,7 +93,8 @@ set_distribution() {
 	else
 		DISTRIBUTION="$1"
 	fi
-	ODL_SYSPATH="$WORKDIR/$DISTRIBUTION/system/org/opendaylight"
+	DISTRIBUTION_DIR="$WORKDIR/$DISTRIBUTION"
+	ODL_SYSPATH="$DISTRIBUTION_DIR/system/org/opendaylight"
 }
 
 setup_distribution() {
@@ -88,17 +102,76 @@ setup_distribution() {
 
 	find_local_file $DISTRIBUTION DISTRIBUTION_FILE
 	download $DISTRIBUTION DISTRIBUTION_FILE
-	install $DISTRIBUTION "$WORKDIR/$DISTRIBUTION" "$WORKDIR"
+	install $DISTRIBUTION "$DISTRIBUTION_DIR" "$WORKDIR"
+}
+
+setup_git() {
+	echo "Setting up git for $DISTRIBUTION"
+	work_in $DISTRIBUTION_DIR git init
+}
+
+configure_l2switch() {
+	local PATCH="$PATCH_DIR/configure-l2switch-2016-11-06.patch"
+	echo "Reconfiguring l2switch..."
+	work_in "$DISTRIBUTION_DIR" git apply "$PATCH"
 }
 
 enable_ofstabilizer() {
-	echo "TODO"
+	local PATCH="$PATCH_DIR/enable-ofstabilizer-2016-11-06.patch"
+
+	echo "Enabling ofstabilizer..."
+
+	if [ ! -d "$CACHE/ofstabilizer" ]; then
+		work_in $CACHE git clone https://github.com/emiapwil/ofstabilizer
+	fi
+
+	local SRC="$CACHE/ofstabilizer/ofstabilizer.py"
+	local DST="$DISTRIBUTION_DIR/bin/ofstabilizer.py"
+	cp "$SRC" "$DST" &>/dev/null
+
+	work_in $DISTRIBUTION_DIR git apply "$PATCH"
 }
 
 install_snlab_ofessentials() {
-	local DOWNLOAD_LINK
+	find_local_file openflow SNLABOPENFLOW_FILE
+	if [ -z "$SNLABOPENFLOW_FILE" ]; then
+		download openflow SNLABOPENFLOW_FILE
+	fi
 
-	echo "TODO"
+	SNLABOF_DIR="$DISTRIBUTION_DIR/system/org/snlab/openflow"
+
+	echo "Installing SNLAB openflow essential components..."
+	install openflow "$SNLABOF_DIR"
+	echo "Done."
+
+	# TODO: how to determine the version for the distribution?
+	local VERSION_SUFFIX=$(echo "$DISTRIBUTION" | sed 's/.*-\([^-]\+-[^-]\+\)/\1/g')
+	OFE_VERSION=$(find $SNLABOF_DIR/features* -name "*$VERSION_SUFFIX")
+	OFE_VERSION=${OFE_VERSION##*\/}
+
+	echo "Enabling SNBLA openflow essential features: $OFE_VERSION..."
+
+	local SRC_PATTERN="^featuresBoot=\(.*\)\$"
+	local DST_PATTERN="featuresBoot=\1,snlab-caltechdemo-ofessentials"
+	local CFG_FILE="$DISTRIBUTION_DIR/etc/org.apache.karaf.features.cfg"
+	sed -i "s/$SRC_PATTERN/$DST_PATTERN/g" "$CFG_FILE"
+
+	local SRC_PATTERN="^\(.*\)\(add new repository in an alphabetical order\)\(.*\)\$"
+	local DST_PATTERN="\\1\\2\\3\\n\\t<repository>mvn:org.snlab.openflow\\/features-of-essentials\\/$OFE_VERSION\\/xml\\/features<\\/repository>"
+	local FEATURE_FILE=$(find "$ODL_SYSPATH" -name '*features-integration-index*.xml')
+	sed -i "s/$SRC_PATTERN/$DST_PATTERN/g" "$FEATURE_FILE"
+
+	echo "Done."
+}
+
+patch_distribution() {
+	PATCH_FILES=$(find $PATCH_DIR -name "$DISTRIBUTION\*" | sort)
+	if [ "$PATCH_FILES" ]; then
+		for patch in $PATCH_FILES; do
+			echo "Applying patch $patch for "$DISTRIBUTION
+			work_in $DISTRIBUTION_DIR git apply $patch
+		done
+	fi
 }
 
 debug_l2switch() {
