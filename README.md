@@ -9,7 +9,7 @@ link must include the full distribution name.
 
 Add the downloading link to `filelist` file.
 
-Run `./setup_controller.sh your-distribution-name`.
+Run `./setup-controller.sh your-distribution-name`.
 
 
 For example, the default distribution is `distribution-karaf-0.4.3-Beryllium-SR3`.
@@ -23,7 +23,7 @@ https://nexus.opendaylight.org/content/repositories/opendaylight.release/org/ope
 Use the following command to set up the controller:
 
 ~~~
-./setup_controller.sh distribution-karaf-0.4.3-Beryllium-SR3
+./setup-controller.sh distribution-karaf-0.4.3-Beryllium-SR3
 ~~~
 
 The script will also try to apply some patches.  The patches will be installed
@@ -31,5 +31,5 @@ by default but if you specify `prompt` the script will ask if you want to apply
 certain patches.  For example:
 
 ~~~
-./setup_controller.sh distribution-karaf-0.4.3-Beryllium-SR3 prompt
+./setup-controller.sh distribution-karaf-0.4.3-Beryllium-SR3 prompt
 ~~~

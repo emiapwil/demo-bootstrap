@@ -28,6 +28,10 @@ enable_debug() {
 	debug_openflowplugin
 }
 
+patch_l2switch() {
+	debug_l2switch
+}
+
 prompt() {
 	CMD="$1"
 
@@ -45,9 +49,11 @@ prompt() {
 	$CMD
 }
 
+setup_git
 prompt configure_l2switch
 prompt enable_ofstabilizer
 prompt install_snlab_ofessentials
 prompt patch_distribution
+prompt patch_l2switch
 
 enable_debug

@@ -144,7 +144,6 @@ install_snlab_ofessentials() {
 	install openflow "$SNLABOF_DIR"
 	echo "Done."
 
-	# TODO: how to determine the version for the distribution?
 	local VERSION_SUFFIX=$(echo "$DISTRIBUTION" | sed 's/.*-\([^-]\+-[^-]\+\)/\1/g')
 	OFE_VERSION=$(find $SNLABOF_DIR/features* -name "*$VERSION_SUFFIX")
 	OFE_VERSION=${OFE_VERSION##*\/}
