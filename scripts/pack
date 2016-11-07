@@ -1,0 +1,14 @@
+#!/bin/bash
+
+FULLNAME=${1?Must specify the path to your package(s)}
+TARGET=${2?Must specify the target folder}
+
+TAR=$(which tar)
+TEST_TAR=${TAR?Must install tar!}
+
+M2_REPO="${3:-"$HOME/.m2"}"
+
+PROJECT_FILE="${FULLNAME##*\.}.tar"
+FULLPATH="$M2_REPO/repository/${FULLNAME//\./\/}"
+
+pushd $FULLPATH && $TAR cvf "$TARGET/$PROJECT_FILE" ./* && popd

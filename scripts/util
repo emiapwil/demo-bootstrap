@@ -1,11 +1,67 @@
 #!/bin/bash
 
-set_distribution() {
-	if [ -z "$1" ]; then
-		DISTRIBUTION="distribution-karaf-0.4.3-Beryllium-SR3"
+WORKDIR="$(pwd)"
+CACHE="$WORKDIR/.cache"
+mkdir -p "$CACHE"
+
+DEFAULT_DISTRIBUTION="distribution-karaf-0.4.3-Beryllium-SR3"
+
+find_local_file() {
+	local FILENAME=$1
+	local TARGET=$2
+
+	if [ -f "$CACHE/$FILENAME.tar.gz" ]; then
+		eval $TARGET="$FILENAME.tar.gz"
+	elif [ -f "$CACHE/$FILENAME.tar" ]; then
+		eval $TARGET="$FILENAME.tar"
+	elif [ -f "$CACHE/$FILENAME.zip" ]; then
+		eval $TARGET="$FILENAME.zip"
 	else
-		DISTRIBUTION="$1"
+		eval $TARGET=""
 	fi
+}
+
+download() {
+	local FILENAME=$1
+	local TARGET=$2
+	local TARGET_FILE=$(eval "echo \$$TARGET")
+
+	echo $TARGET_FILE
+
+	if [ -z "$TARGET_FILE" ] || [ ! -f "$CACHE/$TARGET_FILE" ]; then
+		URL="$(cat filelist | grep $FILENAME)"
+		if [ -z "$URL" ]; then
+			echo "Error: Cannot download file: $FILENAME"
+			exit 1
+		fi
+		wget $URL -P "$CACHE"
+		find_local_file $FILENAME $TARGET
+	fi
+}
+
+install() {
+	local FILENAME=$1
+	local TARGET=$2
+
+	local INSTALL="echo"
+	local TARGET_FILE="Failed to install target: $FILENAME"
+
+	local INSTALL_PATH=${3:-$TARGET}
+
+	rm -rf "$TARGET"
+	if [ -f "$CACHE/$FILENAME.tar.gz" ]; then
+		INSTALL="$(which tar) xvfz"
+		TARGET_FILE="$CACHE/$FILENAME.tar.gz"
+	elif [ -f "$CACHE/$FILENAME.tar" ]; then
+		INSTALL="$(which tar) xvf"
+		TARGET_FILE="$CACHE/$FILENAME.tar"
+	elif [ -f "$CACHE/$FILENAME.zip" ]; then
+		INSTALL="$(which unzip)"
+		TARGET_FILE="$CACHE/$FILENAME.zip"
+	fi
+
+	mkdir -p "$INSTALL_PATH"
+	pushd "$INSTALL_PATH" && $INSTALL "$TARGET_FILE" && popd
 }
 
 merge_log_file() {
@@ -16,5 +72,50 @@ merge_log_file() {
 
 	cat "$ORIGIN" | sed "s/^.*2016/2016/g" | sort | uniq > "$TMP"
 	mv "$TMP" "$ORIGIN"
+}
+
+set_distribution() {
+	if [ -z "$1" ]; then
+		DISTRIBUTION="$DEFAULT_DISTRIBUTION"
+	else
+		DISTRIBUTION="$1"
+	fi
+	ODL_SYSPATH="$WORKDIR/$DISTRIBUTION/system/org/opendaylight"
+}
+
+setup_distribution() {
+	set_distribution $1
+
+	find_local_file $DISTRIBUTION DISTRIBUTION_FILE
+	download $DISTRIBUTION DISTRIBUTION_FILE
+	install $DISTRIBUTION "$WORKDIR/$DISTRIBUTION" "$WORKDIR"
+}
+
+enable_ofstabilizer() {
+	echo "TODO"
+}
+
+install_snlab_ofessentials() {
+	local DOWNLOAD_LINK
+
+	echo "TODO"
+}
+
+debug_l2switch() {
+	find_local_file l2switch L2SWITCH_FILE
+	if [ -z "$L2SWITCH_FILE" ]; then
+		download l2switch L2SWITCH_FILE
+	fi
+
+	install l2switch "$ODL_SYSPATH/l2switch"
+}
+
+debug_openflowplugin() {
+	find_local_file openflowplugin OPENFLOWPLUGIN_FILE
+	if [ -z "$OPENFLOWPLUGIN_FILE" ]; then
+		download openflowplugin OPENFLOWPLUGIN_FILE
+	fi
+
+	install openflowplugin "$ODL_SYSPATH/openflowplugin"
 }
 

@@ -1,2 +1,10 @@
-*.zip
+# temporary files
 *.swp
+
+# distributions for test
+distribution-*
+maple*
+fast*
+
+# running
+.cache
