@@ -1,6 +1,6 @@
 #!/bin/bash
 
-ROOT_DIR="$(dirname $(which $0))"
+ROOT_DIR="$(realpath $(dirname $(which $0)))"
 SCRIPT_DIR="$ROOT_DIR/scripts"
 PATCH_DIR="$ROOT_DIR/patch"
 

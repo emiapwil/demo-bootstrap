@@ -1,5 +1,6 @@
 # temporary files
 *.swp
+test.sh
 
 # distributions for test
 distribution-*
