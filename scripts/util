@@ -73,7 +73,7 @@ install() {
 
 	mkdir -p "$INSTALL_PATH"
 
-	echo "Installing $DISTRIBUTION"
+	echo "Installing $FILENAME"
 	work_in "$INSTALL_PATH" "$INSTALL $TARGET_FILE"
 }
 
@@ -190,4 +190,3 @@ debug_openflowplugin() {
 
 	install openflowplugin "$ODL_SYSPATH/openflowplugin"
 }
-
