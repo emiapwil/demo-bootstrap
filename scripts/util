@@ -11,7 +11,7 @@ work_in() {
 	shift
 	local CMD="$*"
 	pushd "$DIR" &>/dev/null && \
-		$CMD &>/dev/null && \
+		$CMD 1>/dev/null && \
 		echo "Done." || \
 		echo "Failed." && \
 		popd
