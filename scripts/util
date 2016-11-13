@@ -40,7 +40,7 @@ download() {
 	echo $TARGET_FILE
 
 	if [ -z "$TARGET_FILE" ] || [ ! -f "$CACHE/$TARGET_FILE" ]; then
-		URL="$(cat filelist | grep "$FILENAME\..*$")"
+		URL="$(cat "$ROOT_DIR/filelist" | grep "$FILENAME\..*$")"
 		if [ -z "$URL" ]; then
 			echo "Error: Cannot download file: $FILENAME"
 			exit 1
